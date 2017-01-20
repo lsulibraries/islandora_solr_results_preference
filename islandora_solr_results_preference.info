@@ -1,0 +1,9 @@
+
+name = Islandora Solr Results Preference
+dependencies[] = islandora
+dependencies[] = islandora_solr
+description = Let the user specify numbers of results returned.
+configure = admin/islandora/search/islandora_solr/results_preference/
+package = Islandora
+version = 7.x-dev
+core = 7.x

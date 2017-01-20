@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * Implements hook_form_FORMID_alter().
+ */
+function islandora_solr_results_preference_form_islandora_solr_advanced_search_form_alter(&$form, &$form_state) {
+
+    $form['solrLimit'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Results per page'),
+      '#size' => 4,
+      '#weight' => 5,
+      '#default_value' => get_solrLimit(),
+    );
+    $form['controls']['#weight'] = 8;
+    $form['#submit'][] = 'islandora_solr_results_preference_submit_handler';
+}
+
+/**
+ * Submit handler for islandora_solr_advanced_search_form that adds an int to 
+ * $_SESSION.
+ * @param type $form
+ * @param type $form_state
+ */
+function islandora_solr_results_preference_submit_handler(&$form, &$form_state){
+    $_SESSION['islandora_solr_results_preference_solrLimit'] = $form_state['values']['solrLimit'];
+}
+
+/**
+ * Implementes hook_islandora_solr_query_alter
+ * 
+ * @param type $islandora_solr_query
+ */
+function islandora_solr_results_preference_islandora_solr_query_alter($islandora_solr_query){
+    $islandora_solr_query->solrLimit = get_solrLimit();
+}
+
+/**
+ * Helper fn to get a value for IslandoraSolrQueryProcessor::solrLimit, either from
+ * the global user preferences, from user settings entered on adv search form and
+ * saved in $_SESSION, or the default used by islandora_solr_search.
+ * @return int|String
+ */
+function get_solrLimit(){
+    if(isset($_SESSION['islandora_solr_results_preference_solrLimit'])){
+        return $_SESSION['islandora_solr_results_preference_solrLimit'];
+    }else {
+        return variable_get('islandora_solr_num_of_results', 20);
+    }
+}
